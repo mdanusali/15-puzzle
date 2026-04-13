@@ -16,213 +16,122 @@
         }
 
         body {
-            background: radial-gradient(circle, #333 0%, #000 100%);
+            background: #000;
             color: white;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             margin: 0;
+            padding: 0;
             display: flex;
-            align-items: center;
             justify-content: center;
-            min-height: 100vh;
         }
-
-        /* Layout Container */
+        
         .app-container {
             display: flex;
             flex-direction: row;
             background: #1e1e1e;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-            border: 1px solid #444;
-            gap: 40px;
-            max-width: 95vw;
+            min-height: 100vh;
+            width: 100%;
+            max-width: 1200px;
+            gap: 0;
         }
-
-        /* Sidebar Controls */
+        
+        /* Sidebar for Desktop */
         .sidebar {
-            width: 220px;
+            width: 260px;
+            padding: 30px;
             display: flex;
             flex-direction: column;
             gap: 20px;
             border-right: 1px solid var(--sidebar-border);
-            padding-right: 30px;
+            background: #161616;
         }
-
-        h1 {
-            font-size: 1.4rem;
-            margin: 0;
-            letter-spacing: 1px;
-            color: #eee;
-            text-transform: uppercase;
-        }
-
-        .section-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            color: #888;
-            letter-spacing: 1.5px;
-            margin-bottom: 8px;
-        }
-
-        /* Select Menu Styling */
-        select {
-            background: #2d2d2d;
-            color: white;
-            border: 1px solid #444;
-            padding: 8px;
-            border-radius: 5px;
-            width: 100%;
-            cursor: pointer;
-        }
-
-        /* Challenge Preview Grid */
-        .preview-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 35px);
-            grid-template-rows: repeat(4, 35px);
-            gap: 5px;
-            background: #000;
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid #444;
-            width: fit-content;
-        }
-
-        .preview-tile {
-            width: 35px;
-            height: 35px;
-            background: #444;
-            color: #ccc;
+        
+        .main-content {
+            flex-grow: 1;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
-            font-weight: bold;
-            border-radius: 2px;
+            padding: 20px;
         }
-
-        .preview-tile.empty { background: #111; }
-
-        /* Main Game Board */
+        
+        /* Game Board Scaling */
         #puzzle-grid {
             display: grid;
-            grid-template-columns: repeat(4, 90px);
-            grid-template-rows: repeat(4, 90px);
-            gap: 12px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
             background: #111;
-            padding: 15px;
+            padding: 12px;
             border-radius: 12px;
-            box-shadow: inset 0 10px 30px rgba(0,0,0,1);
-            border: 4px solid #2a2a2a;
+            border: 3px solid #2a2a2a;
+            width: 360px; /* Fixed for desktop */
+            height: 360px;
         }
-
+        
         .tile {
-            width: 90px;
-            height: 90px;
+            width: 100%;
+            aspect-ratio: 1 / 1;
             background: var(--metal-gradient);
             color: var(--text-dark);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
+            font-size: 2rem;
             font-weight: 800;
             border-radius: 8px;
             cursor: pointer;
             position: relative;
-            box-shadow: 0 5px 0 #999, 0 10px 20px rgba(0,0,0,0.5);
-            transition: all 0.1s ease;
+            box-shadow: 0 4px 0 #999, 0 8px 15px rgba(0,0,0,0.5);
+            transition: transform 0.05s;
             user-select: none;
+            -webkit-tap-highlight-color: transparent; /* Fix for mobile tap blue box */
         }
-
-        .tile::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--metal-shine);
-            border-radius: 8px;
-        }
-
-        .tile:active {
-            transform: translateY(4px);
-            box-shadow: 0 1px 0 #999, 0 2px 5px rgba(0,0,0,0.5);
-        }
-
+        
         .tile.empty {
             background: #000 !important;
-            box-shadow: inset 0 5px 15px rgba(0,0,0,1);
-            cursor: default;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,1);
         }
-        .tile.empty::after { display: none; }
-
-        /* Buttons */
-        button {
-            background: linear-gradient(to bottom, #4a90e2, #357abd);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
-        }
-
-        button:hover { background: #4a90e2; filter: brightness(1.1); }
-
-        #message {
-            margin-top: 10px;
-            font-weight: bold;
-            color: var(--victory-gold);
-            text-align: center;
-            min-height: 1.2em;
-        }
-
-        /* Mobile View */
-        @media (max-width: 700px) {
-            .app-container { flex-direction: column; align-items: center; }
-            .sidebar { border-right: none; border-bottom: 1px solid #333; padding-right: 0; padding-bottom: 20px; width: 100%; align-items: center; }
-            #puzzle-grid { grid-template-columns: repeat(4, 70px); grid-template-rows: repeat(4, 70px); }
-            .tile { width: 70px; height: 70px; font-size: 24px; }
-        }
+        
+        /* Footer & Dev Info */
         .footer {
-            margin-top: auto; /* Pushes the footer to the bottom of the sidebar */
+            margin-top: auto;
             padding-top: 20px;
             border-top: 1px solid var(--sidebar-border);
-            width: 100%;
         }
-
-        .dev-card {
-            background: #252525;
-            padding: 12px;
-            border-radius: 8px;
-            border-left: 3px solid var(--accent-blue);
-        }
-
-        .dev-name {
-            font-weight: bold;
-            font-size: 0.9rem;
-            margin: 0 0 4px 0;
-            color: #fff;
-        }
-
-        .dev-role {
-            font-size: 0.7rem;
-            color: #aaa;
-            margin: 0 0 8px 0;
-            line-height: 1.2;
-        }
-
-        .dev-link {
-            font-size: 0.75rem;
-            color: var(--accent-blue);
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.2s;
-        }
-
-        .dev-link:hover {
-            color: #fff;
-            text-decoration: underline;
+        
+        /* MOBILE OVERRIDES */
+        @media (max-width: 850px) {
+            .app-container {
+                flex-direction: column;
+            }
+        
+            .sidebar {
+                width: 100%;
+                box-sizing: border-box;
+                border-right: none;
+                border-bottom: 1px solid var(--sidebar-border);
+                padding: 15px;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+            }
+        
+            .sidebar h1 { width: 100%; font-size: 1.2rem; margin-bottom: 10px; }
+            
+            .challenge-container { order: 2; margin: 0; }
+            .mode-selector { order: 1; flex: 1; min-width: 150px; }
+            .controls { order: 3; width: 100%; margin-top: 10px; }
+            .footer { display: none; } /* Hide footer on mobile sidebar to save space */
+        
+            #puzzle-grid {
+                width: 90vw;
+                height: 90vw;
+                max-width: 400px;
+                max-height: 400px;
+            }
+        
+            .tile { font-size: 1.5rem; }
         }
     </style>
 </head>
