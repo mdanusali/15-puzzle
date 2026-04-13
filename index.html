@@ -155,10 +155,14 @@ select:focus {
 
 <div id="puzzle-grid"></div>
 <div class="mode-selector">
-    <label>Mode:</label>
+    <label>Pattern:</label>
     <select id="gameMode" onchange="initGame(); shuffleGame();">
-        <option value="asc">Ascending (1-15)</option>
-        <option value="desc">Descending (15-1)</option>
+        <option value="linear_asc">Linear (1-15)</option>
+        <option value="linear_desc">Linear (15-1)</option>
+        <option value="snake_asc">Snake Ascending</option>
+        <option value="snake_desc">Snake Descending</option>
+        <option value="spiral_asc">Spiral Ascending</option>
+        <option value="spiral_desc">Spiral Descending</option>
     </select>
 </div>
 <div class="controls">
@@ -178,18 +182,38 @@ let targetState = [];
 
 function initGame() {
     const mode = document.getElementById('gameMode').value;
-    
-    if (mode === 'asc') {
-        // 1, 2, 3... 15, null
-        tiles = [...Array(15).keys()].map(i => i + 1);
-        tiles.push(null);
-    } else {
-        // 15, 14, 13... 1, null
-        tiles = [...Array(15).keys()].map(i => 15 - i);
-        tiles.push(null);
+    const size = 4;
+    let tempTiles = Array(16).fill(null);
+
+    // Define the index maps for complex patterns
+    const snakeIndices = [0,1,2,3, 7,6,5,4, 8,9,10,11, 15,14,13,12];
+    const spiralIndices = [0,1,2,3, 7,11,15,14, 13,12,8,4, 5,6,10,9];
+
+    let values = [...Array(15).keys()].map(i => i + 1); // 1-15
+
+    if (mode === "linear_asc") {
+        tiles = [...values, null];
+    } 
+    else if (mode === "linear_desc") {
+        tiles = [...values.reverse(), null];
+    } 
+    else if (mode === "snake_asc") {
+        values.forEach((v, i) => tempTiles[snakeIndices[i]] = v);
+        tiles = tempTiles;
+    } 
+    else if (mode === "snake_desc") {
+        values.reverse().forEach((v, i) => tempTiles[snakeIndices[i]] = v);
+        tiles = tempTiles;
     }
-    
-    // Save the "Win" state for comparison later
+    else if (mode === "spiral_asc") {
+        values.forEach((v, i) => tempTiles[spiralIndices[i]] = v);
+        tiles = tempTiles;
+    }
+    else if (mode === "spiral_desc") {
+        values.reverse().forEach((v, i) => tempTiles[spiralIndices[i]] = v);
+        tiles = tempTiles;
+    }
+
     targetState = [...tiles];
     render();
 }
