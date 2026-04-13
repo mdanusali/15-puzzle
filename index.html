@@ -2,156 +2,190 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>15 Puzzle Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15 Puzzle Pro | Edition 2026</title>
     <style>
         :root {
-            --metal-gradient: linear-gradient(145deg, #e6e6e6, #ffffff);
-            --metal-shine: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 100%);
-            --accent-blue: #4a90e2;
+            --bg-deep: #0f0f0f;
+            --panel-bg: #181818;
+            --accent: #3b82f6;
+            --metal-shine: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 100%);
+            --text-main: #e2e8f0;
         }
 
         body {
-            background: #121212;
-            color: white;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
-            height: 100vh; /* Lock height to viewport */
-            overflow: hidden; /* Prevent body bounce */
+            height: 100vh;
+            overflow: hidden;
         }
 
-        /* Top Header: Controls & Preview */
-        header {
-            padding: 15px;
-            background: #1a1a1a;
-            border-bottom: 1px solid #333;
+        /* Dashboard Layout for Laptop */
+        .app-container {
             display: flex;
-            justify-content: space-between;
+            flex: 1;
+            padding: 20px;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
             align-items: center;
-            gap: 10px;
         }
 
-        .controls-group { flex: 1; }
-        h1 { font-size: 1.1rem; margin: 0 0 8px 0; text-transform: uppercase; color: #888; }
-
-        select {
-            background: #2d2d2d;
-            color: white;
-            border: 1px solid #444;
-            padding: 6px;
-            border-radius: 4px;
-            width: 100%;
-            max-width: 180px;
+        .sidebar {
+            width: 280px;
+            background: var(--panel-bg);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* Blueprint Preview */
-        .preview-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 20px);
-            gap: 3px;
-            background: #000;
-            padding: 5px;
-            border-radius: 4px;
-            border: 1px solid #444;
-        }
-        .p-tile { width: 20px; height: 20px; background: #444; font-size: 8px; display: flex; align-items: center; justify-content: center; border-radius: 1px; }
-        .p-tile.empty { background: #111; }
-
-        /* Center Game Area */
-        main {
+        .main-game {
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            padding: 10px;
+            justify-content: center;
         }
 
+        h1 { font-size: 1.2rem; margin: 0; letter-spacing: 1px; color: #aaa; text-transform: uppercase; }
+
+        select {
+            width: 100%;
+            background: #252525;
+            color: white;
+            border: 1px solid #444;
+            padding: 10px;
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Blueprint Preview */
+        .preview-box { text-align: center; }
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 25px);
+            gap: 4px;
+            background: #000;
+            padding: 8px;
+            border-radius: 8px;
+            margin: 10px auto;
+            width: fit-content;
+        }
+        .p-tile { width: 25px; height: 25px; background: #333; font-size: 9px; display: flex; align-items: center; justify-content: center; border-radius: 2px; }
+        .p-tile.empty { background: #111; }
+
+        /* Game Board */
         #puzzle-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            background: #000;
-            padding: 12px;
+            grid-template-columns: repeat(4, 90px);
+            grid-template-rows: repeat(4, 90px);
+            gap: 12px;
+            background: #111;
+            padding: 15px;
             border-radius: 12px;
-            border: 3px solid #2a2a2a;
-            width: 90vw;
-            max-width: 380px;
-            aspect-ratio: 1/1;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+            border: 4px solid #222;
+            box-shadow: inset 0 0 40px #000;
         }
 
         .tile {
-            background: var(--metal-gradient);
-            color: #2d3748;
+            background: linear-gradient(145deg, #ffffff, #d1d1d1);
+            color: #1a1a1a;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: 800;
-            border-radius: 6px;
-            position: relative;
-            box-shadow: 0 4px 0 #999, 0 8px 15px rgba(0,0,0,0.3);
+            border-radius: 8px;
             cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            box-shadow: 0 6px 0 #999, 0 12px 20px rgba(0,0,0,0.4);
+            transition: transform 0.05s;
         }
-        .tile::after { content: ''; position: absolute; inset: 0; background: var(--metal-shine); border-radius: 6px; }
-        .tile.empty { background: #111 !important; box-shadow: inset 0 4px 8px rgba(0,0,0,0.8); }
+        .tile::after { content: ''; position: absolute; inset: 0; background: var(--metal-shine); border-radius: 8px; }
+        .tile:active { transform: translateY(4px); box-shadow: 0 2px 0 #999; }
+        .tile.empty { background: #0a0a0a !important; box-shadow: inset 0 6px 12px rgba(0,0,0,0.8); cursor: default; }
         .tile.empty::after { display: none; }
 
         button {
-            margin-top: 15px;
-            padding: 10px 25px;
-            background: var(--accent-blue);
+            background: var(--accent);
             color: white;
             border: none;
-            border-radius: 5px;
+            padding: 14px 28px;
+            border-radius: 8px;
             font-weight: bold;
-            box-shadow: 0 4px 0 #2a5a8a;
+            cursor: pointer;
+            width: 100%;
+            transition: filter 0.2s;
         }
+        button:hover { filter: brightness(1.2); }
 
-        #message { margin-top: 10px; height: 20px; color: #ffd700; font-weight: bold; }
+        #message { height: 24px; color: #fbbf24; font-weight: bold; margin-bottom: 10px; }
 
-        /* Single Line Footer */
+        /* Fixed Single Line Footer */
         footer {
-            background: #111;
-            border-top: 1px solid #333;
-            padding: 8px 15px;
+            background: #0a0a0a;
+            border-top: 1px solid #222;
+            padding: 12px;
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #666;
-            white-space: nowrap;
         }
-        footer b { color: var(--accent-blue); }
-        footer a { color: #888; text-decoration: none; margin-left: 10px; border-left: 1px solid #444; padding-left: 10px; }
+        footer b { color: var(--accent); }
+        footer a { color: #888; text-decoration: none; margin-left: 15px; border-left: 1px solid #333; padding-left: 15px; }
+
+        /* Responsive Fix for Mobile */
+        @media (max-width: 800px) {
+            .app-container { flex-direction: column; overflow-y: auto; height: auto; padding: 10px; }
+            .sidebar { width: 100%; box-sizing: border-box; }
+            #puzzle-grid { grid-template-columns: repeat(4, 75px); grid-template-rows: repeat(4, 75px); }
+            .tile { font-size: 1.5rem; }
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="controls-group">
+<div class="app-container">
+    <div class="sidebar">
         <h1>15 Puzzle</h1>
-        <select id="gameMode" onchange="initGame();">
-            <option value="linear_asc">Linear (1-15)</option>
-            <option value="linear_desc">Linear (15-1)</option>
-            <option value="snake_asc">Snake Asc</option>
-            <option value="spiral_asc">Spiral Asc</option>
-            <option value="random_custom">Chaos Mode</option>
-        </select>
-    </div>
-    <div id="challenge-preview" class="preview-grid"></div>
-</header>
+        
+        <div>
+            <label style="font-size: 0.7rem; color: #666; text-transform: uppercase;">Game Mode</label>
+            <select id="gameMode" onchange="initGame();">
+                <option value="linear_asc">Linear (1-15)</option>
+                <option value="linear_desc">Linear (15-1)</option>
+                <option value="snake_asc">Snake Asc</option>
+                <option value="snake_desc">Snake Desc</option>
+                <option value="spiral_asc">Spiral Asc</option>
+                <option value="spiral_desc">Spiral Desc</option>
+                <option value="chaos">Chaos Mode</option>
+            </select>
+        </div>
 
-<main>
-    <div id="puzzle-grid"></div>
-    <div id="message"></div>
-    <button onclick="shuffleGame()">SHUFFLE & PLAY</button>
-</main>
+        <div class="preview-box">
+            <div class="preview-grid" id="challenge-preview"></div>
+            <span style="font-size: 0.7rem; color: #555;">TARGET PATTERN</span>
+        </div>
+
+        <button onclick="shuffleGame()">SHUFFLE & PLAY</button>
+    </div>
+
+    <div class="main-game">
+        <div id="message"></div>
+        <div id="puzzle-grid"></div>
+    </div>
+</div>
 
 <footer>
-    Developed by <b>Mohammad Anus Ali</b> | Programming Enthusiast <a href="https://www.linkedin.com/in/mdanusali/" target="_blank">LinkedIn</a>
+    Developed by <b>Your Name</b> | PhD Candidate & Program Manager <a href="https://linkedin.com/in/yourprofile" target="_blank">LinkedIn</a>
 </footer>
 
 <script>
@@ -165,7 +199,7 @@
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.frequency.setValueAtTime(600, ctx.currentTime);
+        osc.frequency.setValueAtTime(500, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.1);
         gain.gain.setValueAtTime(0.1, ctx.currentTime);
         gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.1);
@@ -179,20 +213,23 @@
     function initGame() {
         message.textContent = '';
         const mode = document.getElementById('gameMode').value;
-        let baseValues = [...Array(15).keys()].map(i => i + 1);
-        let tempTarget = Array(16).fill(null);
+        let base = [...Array(15).keys()].map(i => i + 1);
+        let temp = Array(16).fill(null);
 
-        if (mode === "linear_asc") targetState = [...baseValues, null];
-        else if (mode === "linear_desc") targetState = [...baseValues.reverse(), null];
-        else if (mode === "snake_asc") { baseValues.forEach((v, i) => tempTarget[snakeMap[i]] = v); targetState = tempTarget; }
-        else if (mode === "spiral_asc") { baseValues.forEach((v, i) => tempTarget[spiralMap[i]] = v); targetState = tempTarget; }
-        else if (mode === "random_custom") {
-            let safe = [...Array(15).keys()].map(i => i + 1).concat(null);
-            for(let i=0; i<100; i++) {
-                const emptyIdx = safe.indexOf(null);
-                const moves = getNeighbors(emptyIdx);
-                const moveIdx = safe.indexOf(moves[Math.floor(Math.random() * moves.length)]);
-                [safe[emptyIdx], safe[moveIdx]] = [safe[moveIdx], safe[emptyIdx]];
+        if (mode === "linear_asc") targetState = [...base, null];
+        else if (mode === "linear_desc") targetState = [...base.reverse(), null];
+        else if (mode === "snake_asc") { base.forEach((v, i) => temp[snakeMap[i]] = v); targetState = temp; }
+        else if (mode === "snake_desc") { base.reverse().forEach((v, i) => temp[snakeMap[i]] = v); targetState = temp; }
+        else if (mode === "spiral_asc") { base.forEach((v, i) => temp[spiralMap[i]] = v); targetState = temp; }
+        else if (mode === "spiral_desc") { base.reverse().forEach((v, i) => temp[spiralMap[i]] = v); targetState = temp; }
+        else if (mode === "chaos") {
+            let safe = [...base, null];
+            for(let i=0; i<150; i++) {
+                const empty = safe.indexOf(null);
+                const moves = getNeighbors(empty, safe);
+                const moveVal = moves[Math.floor(Math.random() * moves.length)];
+                const moveIdx = safe.indexOf(moveVal);
+                [safe[empty], safe[moveIdx]] = [safe[moveIdx], safe[empty]];
             }
             targetState = safe;
         }
@@ -223,30 +260,31 @@
         });
     }
 
-    function getNeighbors(idx) {
+    function getNeighbors(idx, boardArray) {
         const row = Math.floor(idx / 4), col = idx % 4, neighbors = [];
-        if (row > 0) neighbors.push(tiles[idx - 4]);
-        if (row < 3) neighbors.push(tiles[idx + 4]);
-        if (col > 0) neighbors.push(tiles[idx - 1]);
-        if (col < 3) neighbors.push(tiles[idx + 1]);
-        return neighbors.filter(n => n !== undefined);
+        if (row > 0) neighbors.push(boardArray[idx - 4]);
+        if (row < 3) neighbors.push(boardArray[idx + 4]);
+        if (col > 0) neighbors.push(boardArray[idx - 1]);
+        if (col < 3) neighbors.push(boardArray[idx + 1]);
+        return neighbors.filter(n => n !== undefined && n !== null);
     }
 
     function moveTile(idx) {
         const emptyIdx = tiles.indexOf(null);
-        if (getNeighbors(emptyIdx).includes(tiles[idx])) {
+        if (getNeighbors(emptyIdx, tiles).includes(tiles[idx])) {
             playTick();
             [tiles[idx], tiles[emptyIdx]] = [tiles[emptyIdx], tiles[idx]];
             render();
-            if (tiles.every((v, i) => v === targetState[i])) message.textContent = "🏆 MATCHED!";
+            if (tiles.every((v, i) => v === targetState[i])) message.textContent = "🎯 CHALLENGE COMPLETE!";
         }
     }
 
     function shuffleGame() {
-        for (let i = 0; i < 200; i++) {
+        for (let i = 0; i < 300; i++) {
             const emptyIdx = tiles.indexOf(null);
-            const moves = getNeighbors(emptyIdx);
-            const moveIdx = tiles.indexOf(moves[Math.floor(Math.random() * moves.length)]);
+            const moves = getNeighbors(emptyIdx, tiles);
+            const moveVal = moves[Math.floor(Math.random() * moves.length)];
+            const moveIdx = tiles.indexOf(moveVal);
             [tiles[emptyIdx], tiles[moveIdx]] = [tiles[moveIdx], tiles[emptyIdx]];
         }
         render();
