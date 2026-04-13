@@ -117,6 +117,33 @@ button:hover {
     color: #ffd700; /* Gold for the win */
     text-shadow: 0 0 10px rgba(255,215,0,0.4);
 }
+        .mode-selector {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mode-selector label {
+    font-size: 14px;
+    color: #cbd5e0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+select {
+    background: #2d3748;
+    color: white;
+    border: 1px solid #4a5568;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+}
+
+select:focus {
+    border-color: var(--accent-shine);
+}
     </style>
 </head>
 <body>
@@ -127,7 +154,13 @@ button:hover {
 </div>
 
 <div id="puzzle-grid"></div>
-
+<div class="mode-selector">
+    <label>Mode:</label>
+    <select id="gameMode" onchange="initGame(); shuffleGame();">
+        <option value="asc">Ascending (1-15)</option>
+        <option value="desc">Descending (15-1)</option>
+    </select>
+</div>
 <div class="controls">
     <button onclick="shuffleGame()">New Game / Shuffle</button>
 </div>
@@ -140,11 +173,40 @@ button:hover {
     let tiles = [];
 
     // Initialize the board
-    function initGame() {
+    // Global variable to track target
+let targetState = [];
+
+function initGame() {
+    const mode = document.getElementById('gameMode').value;
+    
+    if (mode === 'asc') {
+        // 1, 2, 3... 15, null
         tiles = [...Array(15).keys()].map(i => i + 1);
-        tiles.push(null); // The empty space
-        render();
+        tiles.push(null);
+    } else {
+        // 15, 14, 13... 1, null
+        tiles = [...Array(15).keys()].map(i => 15 - i);
+        tiles.push(null);
     }
+    
+    // Save the "Win" state for comparison later
+    targetState = [...tiles];
+    render();
+}
+
+function checkWin() {
+    // Compare current tiles array to the pre-calculated targetState
+    const isWin = tiles.every((val, index) => val === targetState[index]);
+    
+    if (isWin) {
+        // We use a small delay so the user sees the final move before the alert
+        setTimeout(() => {
+            message.textContent = "🏆 Victory! Target reached.";
+            // Change shine color to gold for victory
+            document.documentElement.style.setProperty('--accent-shine', '#ffd700');
+        }, 100);
+    }
+}
 
     function render() {
         grid.innerHTML = '';
@@ -221,15 +283,7 @@ button:hover {
         render();
     }
 
-    function checkWin() {
-        const winState = [...Array(15).keys()].map(i => i + 1);
-        winState.push(null);
-        
-        const isWin = tiles.every((val, index) => val === winState[index]);
-        if (isWin) {
-            message.textContent = "🎉 Congratulations! You solved it!";
-        }
-    }
+    
 
     initGame();
     shuffleGame();
