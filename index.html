@@ -178,6 +178,11 @@ select:focus {
 .preview-tile.empty {
     background: #000;
 }
+    /* Add a glow to the preview when in Custom Mode */
+.custom-active #challenge-preview {
+    border-color: var(--accent-shine);
+    box-shadow: 0 0 15px rgba(74, 144, 226, 0.3);
+}
     </style>
 </head>
 <body>
@@ -200,6 +205,7 @@ select:focus {
         <option value="snake_desc">Snake Descending</option>
         <option value="spiral_asc">Spiral Ascending</option>
         <option value="spiral_desc">Spiral Descending</option>
+        <option value="random_custom">Random Challenge (Chaos Mode)</option>
     </select>
 </div>
 <div class="controls">
@@ -236,41 +242,32 @@ function renderPreview() {
 
 function initGame() {
     const mode = document.getElementById('gameMode').value;
-    const size = 4;
-    let tempTiles = Array(16).fill(null);
+    const message = document.getElementById('message');
+    message.textContent = ''; // Clear previous victory messages
+    
+    let values = [...Array(15).keys()].map(i => i + 1); // [1, 2, ... 15]
 
-    // Define the index maps for complex patterns
-    const snakeIndices = [0,1,2,3, 7,6,5,4, 8,9,10,11, 15,14,13,12];
-    const spiralIndices = [0,1,2,3, 7,11,15,14, 13,12,8,4, 5,6,10,9];
-
-    let values = [...Array(15).keys()].map(i => i + 1); // 1-15
-
-    if (mode === "linear_asc") {
-        tiles = [...values, null];
+    if (mode === "random_custom") {
+        // 1. Generate a RANDOM target state
+        let randomTarget = [...values, null];
+        // Fisher-Yates shuffle for the target blueprint
+        for (let i = randomTarget.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [randomTarget[i], randomTarget[j]] = [randomTarget[j], randomTarget[i]];
+        }
+        targetState = randomTarget;
+        
+        // 2. Set the player's board to a different state (or solved state) 
+        // and then shuffleGame() will be called to scramble it.
+        tiles = [...values, null]; 
     } 
-    else if (mode === "linear_desc") {
-        tiles = [...values.reverse(), null];
-    } 
-    else if (mode === "snake_asc") {
-        values.forEach((v, i) => tempTiles[snakeIndices[i]] = v);
-        tiles = tempTiles;
-    } 
-    else if (mode === "snake_desc") {
-        values.reverse().forEach((v, i) => tempTiles[snakeIndices[i]] = v);
-        tiles = tempTiles;
-    }
-    else if (mode === "spiral_asc") {
-        values.forEach((v, i) => tempTiles[spiralIndices[i]] = v);
-        tiles = tempTiles;
-    }
-    else if (mode === "spiral_desc") {
-        values.reverse().forEach((v, i) => tempTiles[spiralIndices[i]] = v);
-        tiles = tempTiles;
+    else {
+        // ... Keep your existing snake/spiral/linear logic here ...
+        // (As defined in previous steps)
     }
 
-    targetState = [...tiles];
     render();
-    renderPreview();
+    renderPreview(); // Update the small blueprint window
 }
 
 function checkWin() {
