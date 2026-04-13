@@ -6,77 +6,117 @@
     <title>15 Puzzle Pro</title>
     <style>
         :root {
-            --bg-color: #f0f2f5;
-            --tile-color: #ffffff;
-            --empty-color: #cbd5e0;
-            --text-color: #2d3748;
-            --accent-color: #4a90e2;
-        }
+    --frame-bg: #2c3e50;
+    --metal-gradient: linear-gradient(145deg, #e6e6e6, #ffffff);
+    --metal-shine: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 100%);
+    --text-color: #333;
+    --accent-shine: #4a90e2;
+}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
+body {
+    background: radial-gradient(circle, #454545 0%, #1a1a1a 100%);
+    color: white;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
 
-        .header { margin-bottom: 20px; text-align: center; }
+h1 {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    letter-spacing: 2px;
+}
 
-        #puzzle-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 80px);
-            grid-template-rows: repeat(4, 80px);
-            gap: 10px;
-            background-color: #a0aec0;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+/* The Outer Tray */
+#puzzle-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 85px);
+    grid-template-rows: repeat(4, 85px);
+    gap: 12px;
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 12px;
+    border: 4px solid #333;
+    /* Inset shadow makes the tray look deep */
+    box-shadow: 
+        inset 0 10px 20px rgba(0,0,0,0.8),
+        0 20px 40px rgba(0,0,0,0.6);
+}
 
-        .tile {
-            width: 80px;
-            height: 80px;
-            background-color: var(--tile-color);
-            color: var(--text-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: bold;
-            border-radius: 4px;
-            cursor: pointer;
-            user-select: none;
-            transition: transform 0.1s, background-color 0.2s;
-        }
+/* The Metallic Tiles */
+.tile {
+    width: 85px;
+    height: 85px;
+    background: var(--metal-gradient);
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 800;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    /* Outset shadow makes the tile pop out */
+    box-shadow: 
+        0 4px 0 #999, /* The "side" of the metal plate */
+        0 8px 15px rgba(0,0,0,0.4);
+    transition: all 0.1s ease;
+}
 
-        .tile:hover { background-color: #edf2f7; }
+/* Brushed metal texture effect */
+.tile::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--metal-shine);
+    pointer-events: none;
+}
 
-        .tile.empty {
-            background-color: var(--empty-color);
-            cursor: default;
-        }
+.tile:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #999, 0 2px 5px rgba(0,0,0,0.4);
+}
 
-        .tile.empty:hover { background-color: var(--empty-color); }
+.tile.empty {
+    background: #0f0f0f !important;
+    box-shadow: inset 0 2px 10px rgba(0,0,0,1);
+    cursor: default;
+}
 
-        .controls { margin-top: 20px; }
+.tile.empty::before { display: none; }
 
-        button {
-            padding: 10px 25px;
-            font-size: 16px;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+/* Refined Controls */
+.controls { margin-top: 40px; }
 
-        button:hover { background-color: #357abd; }
+button {
+    background: linear-gradient(to bottom, #444, #222);
+    color: #eee;
+    padding: 12px 30px;
+    border: 1px solid #111;
+    border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: 0.3s;
+}
 
-        #message { margin-top: 15px; font-weight: bold; color: #38a169; }
+button:hover {
+    color: #fff;
+    box-shadow: 0 0 15px var(--accent-shine);
+    border-color: var(--accent-shine);
+}
+
+#message {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: #ffd700; /* Gold for the win */
+    text-shadow: 0 0 10px rgba(255,215,0,0.4);
+}
     </style>
 </head>
 <body>
@@ -122,16 +162,38 @@
         });
     }
 
+    function playTickSound() {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+
+    oscillator.type = 'sine'; // Clean, soft sound
+    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); // Frequency in Hz
+    oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
+
+    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.1);
+}
+
     function moveTile(index) {
         const emptyIndex = tiles.indexOf(null);
-        const validMoves = getValidMoves(emptyIndex);
+    const validMoves = getValidMoves(emptyIndex);
 
-        if (validMoves.includes(index)) {
-            // Swap
-            [tiles[index], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[index]];
-            render();
-            checkWin();
-        }
+    if (validMoves.includes(index)) {
+        // Play the tick sound
+        playTickSound();
+
+        // Swap logic
+        [tiles[index], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[index]];
+        render();
+        checkWin();
+        }    
     }
 
     function getValidMoves(emptyIndex) {
