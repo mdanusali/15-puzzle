@@ -138,10 +138,9 @@
 <body>
 
 <div class="app-container">
-    <div class="sidebar">
-        <h1>15 Puzzle</h1>
-        
-        <div>
+    <div class="content-wrapper">
+        <div class="sidebar">
+            <h1>15 Puzzle</h1>
             <div class="section-label">Target Pattern</div>
             <select id="gameMode" onchange="initGame();">
                 <option value="linear_asc">Linear (1-15)</option>
@@ -152,26 +151,26 @@
                 <option value="spiral_desc">Spiral Descending</option>
                 <option value="random_custom">Chaos Mode (Random)</option>
             </select>
-        </div>
 
-        <div class="challenge-container">
-            <div id="challenge-preview" class="preview-grid"></div>
-        </div>
-
-        <button onclick="shuffleGame()">Shuffle & Play</button>
-        <div id="message"></div>
-        <div class="footer">
-            <div class="section-label">Developer</div>
-                <div class="dev-card">
-                    <p class="dev-name">Mohammad Anus Ali</p>
-                    <p class="dev-role">Programming enthusiast</p>
-                    <a href="https://linkedin.com/in/mdanusali" target="_blank" class="dev-link">Linkedin</a>
-                </div>
+            <div class="challenge-container">
+                <div id="challenge-preview" class="preview-grid"></div>
             </div>
+
+            <button onclick="shuffleGame()">Shuffle & Play</button>
+            <div id="message"></div>
         </div>
 
-    <div class="main-content">
-        <div id="puzzle-grid"></div>
+        <div class="main-content">
+            <div id="puzzle-grid"></div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="dev-card">
+            <p class="dev-name">Your Name</p>
+            <p class="dev-role">Program Manager | PhD Candidate</p>
+            <a href="https://linkedin.com/in/yourprofile" target="_blank" class="dev-link">Professional Profile</a>
+        </div>
     </div>
 </div>
 
