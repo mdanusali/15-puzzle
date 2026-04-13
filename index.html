@@ -191,11 +191,6 @@ select:focus {
     <h1>15 Puzzle</h1>
     <p>Click adjacent tiles to move them.</p>
 </div>
-<div class="challenge-container">
-    <p>Target Pattern:</p>
-    <div id="challenge-preview" class="preview-grid"></div>
-</div>
-<div id="puzzle-grid"></div>
 <div class="mode-selector">
     <label>Pattern:</label>
     <select id="gameMode" onchange="initGame(); shuffleGame();">
@@ -208,6 +203,12 @@ select:focus {
         <option value="random_custom">Random Challenge (Chaos Mode)</option>
     </select>
 </div>
+<div class="challenge-container">
+    <p>Target Pattern:</p>
+    <div id="challenge-preview" class="preview-grid"></div>
+</div>
+<div id="puzzle-grid"></div>
+
 <div class="controls">
     <button onclick="shuffleGame()">New Game / Shuffle</button>
 </div>
