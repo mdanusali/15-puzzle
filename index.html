@@ -3,249 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>15 Puzzle Pro</title>
+    <title>15 Puzzle Pro | Industrial Edition</title>
     <style>
         :root {
-    --frame-bg: #2c3e50;
-    --metal-gradient: linear-gradient(145deg, #e6e6e6, #ffffff);
-    --metal-shine: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 100%);
-    --text-color: #333;
-    --accent-shine: #4a90e2;
-}
+            --frame-bg: #1a1a1a;
+            --sidebar-border: #333;
+            --metal-gradient: linear-gradient(145deg, #e6e6e6, #ffffff);
+            --metal-shine: linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 100%);
+            --text-dark: #2d3748;
+            --accent-blue: #4a90e2;
+            --victory-gold: #ffd700;
+        }
 
-body {
-    background: radial-gradient(circle, #454545 0%, #1a1a1a 100%);
-    color: white;
-    font-family: 'Segoe UI', Roboto, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-}
+        body {
+            background: radial-gradient(circle, #333 0%, #000 100%);
+            color: white;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
 
-h1 {
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    letter-spacing: 2px;
-}
-
-/* The Outer Tray */
-#puzzle-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 85px);
-    grid-template-rows: repeat(4, 85px);
-    gap: 12px;
-    background: #1a1a1a;
-    padding: 15px;
-    border-radius: 12px;
-    border: 4px solid #333;
-    /* Inset shadow makes the tray look deep */
-    box-shadow: 
-        inset 0 10px 20px rgba(0,0,0,0.8),
-        0 20px 40px rgba(0,0,0,0.6);
-}
-
-/* The Metallic Tiles */
-.tile {
-    width: 85px;
-    height: 85px;
-    background: var(--metal-gradient);
-    color: var(--text-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    font-weight: 800;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    /* Outset shadow makes the tile pop out */
-    box-shadow: 
-        0 4px 0 #999, /* The "side" of the metal plate */
-        0 8px 15px rgba(0,0,0,0.4);
-    transition: all 0.1s ease;
-}
-
-/* Brushed metal texture effect */
-.tile::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: var(--metal-shine);
-    pointer-events: none;
-}
-
-.tile:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #999, 0 2px 5px rgba(0,0,0,0.4);
-}
-
-.tile.empty {
-    background: #0f0f0f !important;
-    box-shadow: inset 0 2px 10px rgba(0,0,0,1);
-    cursor: default;
-}
-
-.tile.empty::before { display: none; }
-
-/* Refined Controls */
-.controls { margin-top: 40px; }
-
-button {
-    background: linear-gradient(to bottom, #444, #222);
-    color: #eee;
-    padding: 12px 30px;
-    border: 1px solid #111;
-    border-radius: 30px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    transition: 0.3s;
-}
-
-button:hover {
-    color: #fff;
-    box-shadow: 0 0 15px var(--accent-shine);
-    border-color: var(--accent-shine);
-}
-
-#message {
-    margin-top: 20px;
-    font-size: 1.2rem;
-    color: #ffd700; /* Gold for the win */
-    text-shadow: 0 0 10px rgba(255,215,0,0.4);
-}
-        .mode-selector {
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.mode-selector label {
-    font-size: 14px;
-    color: #cbd5e0;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-select {
-    background: #2d3748;
-    color: white;
-    border: 1px solid #4a5568;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    outline: none;
-}
-
-select:focus {
-    border-color: var(--accent-shine);
-}
-        .challenge-container {
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.preview-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 30px); /* Smaller tiles */
-    grid-template-rows: repeat(4, 30px);
-    gap: 4px;
-    background: #111;
-    padding: 8px;
-    border-radius: 6px;
-    border: 2px solid #444;
-    display: inline-grid;
-    box-shadow: inset 0 0 10px #000;
-}
-
-.preview-tile {
-    width: 30px;
-    height: 30px;
-    background: linear-gradient(145deg, #555, #333);
-    color: #aaa;
-    font-size: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 2px;
-    font-weight: bold;
-}
-
-.preview-tile.empty {
-    background: #000;
-}
-    /* Add a glow to the preview when in Custom Mode */
-.custom-active #challenge-preview {
-    border-color: var(--accent-shine);
-    box-shadow: 0 0 15px rgba(74, 144, 226, 0.3);
-}
         /* Layout Container */
-.app-container {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 50px;
-    background: #1a1a1a;
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 0 50px rgba(0,0,0,0.5);
-    border: 1px solid #333;
-}
+        .app-container {
+            display: flex;
+            flex-direction: row;
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            border: 1px solid #444;
+            gap: 40px;
+            max-width: 95vw;
+        }
 
-/* Sidebar Styling */
-.sidebar {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 200px;
-    border-right: 1px solid #333;
-    padding-right: 40px;
-}
+        /* Sidebar Controls */
+        .sidebar {
+            width: 220px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            border-right: 1px solid var(--sidebar-border);
+            padding-right: 30px;
+        }
 
-.main-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+        h1 {
+            font-size: 1.4rem;
+            margin: 0;
+            letter-spacing: 1px;
+            color: #eee;
+            text-transform: uppercase;
+        }
 
-/* Ensure the game looks good in the new layout */
-#puzzle-grid {
-    /* Existing metallic styles from previous step */
-}
+        .section-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #888;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
 
-/* Mobile Responsiveness: Stack them on small screens */
-@media (max-width: 768px) {
-    .app-container {
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-        padding: 20px;
-    }
-    .sidebar {
-        border-right: none;
-        border-bottom: 1px solid #333;
-        padding-right: 0;
-        padding-bottom: 20px;
-        width: 100%;
-    }
-}
+        /* Select Menu Styling */
+        select {
+            background: #2d2d2d;
+            color: white;
+            border: 1px solid #444;
+            padding: 8px;
+            border-radius: 5px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        /* Challenge Preview Grid */
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 35px);
+            grid-template-rows: repeat(4, 35px);
+            gap: 5px;
+            background: #000;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #444;
+            width: fit-content;
+        }
+
+        .preview-tile {
+            width: 35px;
+            height: 35px;
+            background: #444;
+            color: #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 2px;
+        }
+
+        .preview-tile.empty { background: #111; }
+
+        /* Main Game Board */
+        #puzzle-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 90px);
+            grid-template-rows: repeat(4, 90px);
+            gap: 12px;
+            background: #111;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: inset 0 10px 30px rgba(0,0,0,1);
+            border: 4px solid #2a2a2a;
+        }
+
+        .tile {
+            width: 90px;
+            height: 90px;
+            background: var(--metal-gradient);
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 800;
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 5px 0 #999, 0 10px 20px rgba(0,0,0,0.5);
+            transition: all 0.1s ease;
+            user-select: none;
+        }
+
+        .tile::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--metal-shine);
+            border-radius: 8px;
+        }
+
+        .tile:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #999, 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .tile.empty {
+            background: #000 !important;
+            box-shadow: inset 0 5px 15px rgba(0,0,0,1);
+            cursor: default;
+        }
+        .tile.empty::after { display: none; }
+
+        /* Buttons */
+        button {
+            background: linear-gradient(to bottom, #4a90e2, #357abd);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        button:hover { background: #4a90e2; filter: brightness(1.1); }
+
+        #message {
+            margin-top: 10px;
+            font-weight: bold;
+            color: var(--victory-gold);
+            text-align: center;
+            min-height: 1.2em;
+        }
+
+        /* Mobile View */
+        @media (max-width: 700px) {
+            .app-container { flex-direction: column; align-items: center; }
+            .sidebar { border-right: none; border-bottom: 1px solid #333; padding-right: 0; padding-bottom: 20px; width: 100%; align-items: center; }
+            #puzzle-grid { grid-template-columns: repeat(4, 70px); grid-template-rows: repeat(4, 70px); }
+            .tile { width: 70px; height: 70px; font-size: 24px; }
+        }
     </style>
 </head>
 <body>
+
 <div class="app-container">
     <div class="sidebar">
-        <div class="header">
-            <h1>15 Puzzle Pro</h1>
-        </div>
-
-        <div class="mode-selector">
-            <label>Pattern:</label>
-            <select id="gameMode" onchange="initGame(); shuffleGame();">
+        <h1>15 Puzzle</h1>
+        
+        <div>
+            <div class="section-label">Target Pattern</div>
+            <select id="gameMode" onchange="initGame();">
                 <option value="linear_asc">Linear (1-15)</option>
                 <option value="linear_desc">Linear (15-1)</option>
                 <option value="snake_asc">Snake Ascending</option>
@@ -257,14 +206,10 @@ select:focus {
         </div>
 
         <div class="challenge-container">
-            <p>Target Blueprint</p>
             <div id="challenge-preview" class="preview-grid"></div>
         </div>
 
-        <div class="controls">
-            <button onclick="shuffleGame()">New Game / Shuffle</button>
-        </div>
-
+        <button onclick="shuffleGame()">Shuffle & Play</button>
         <div id="message"></div>
     </div>
 
@@ -272,186 +217,132 @@ select:focus {
         <div id="puzzle-grid"></div>
     </div>
 </div>
-<div class="header">
-    <h1>15 Puzzle</h1>
-    <p>Click adjacent tiles to move them.</p>
-</div>
-<div class="mode-selector">
-    <label>Pattern:</label>
-    <select id="gameMode" onchange="initGame(); shuffleGame();">
-        <option value="linear_asc">Linear (1-15)</option>
-        <option value="linear_desc">Linear (15-1)</option>
-        <option value="snake_asc">Snake Ascending</option>
-        <option value="snake_desc">Snake Descending</option>
-        <option value="spiral_asc">Spiral Ascending</option>
-        <option value="spiral_desc">Spiral Descending</option>
-        <option value="random_custom">Random Challenge (Chaos Mode)</option>
-    </select>
-</div>
-<div class="challenge-container">
-    <p>Target Pattern:</p>
-    <div id="challenge-preview" class="preview-grid"></div>
-</div>
-<div id="puzzle-grid"></div>
-
-<div class="controls">
-    <button onclick="shuffleGame()">New Game / Shuffle</button>
-</div>
-
-<div id="message"></div>
 
 <script>
-    const grid = document.getElementById('puzzle-grid');
-    const message = document.getElementById('message');
     let tiles = [];
-
-    // Initialize the board
-    // Global variable to track target
-let targetState = [];
-
-const previewGrid = document.getElementById('challenge-preview');
-
-function renderPreview() {
-    previewGrid.innerHTML = '';
-    // targetState is the array we defined in your initGame() logic
-    targetState.forEach(tile => {
-        const pTile = document.createElement('div');
-        pTile.classList.add('preview-tile');
-        if (tile === null) {
-            pTile.classList.add('empty');
-        } else {
-            pTile.textContent = tile;
-        }
-        previewGrid.appendChild(pTile);
-    });
-}
-
-function initGame() {
-    const mode = document.getElementById('gameMode').value;
+    let targetState = [];
+    const grid = document.getElementById('puzzle-grid');
+    const preview = document.getElementById('challenge-preview');
     const message = document.getElementById('message');
-    message.textContent = ''; // Clear previous victory messages
-    
-    let values = [...Array(15).keys()].map(i => i + 1); // [1, 2, ... 15]
 
-    if (mode === "random_custom") {
-        // 1. Generate a RANDOM target state
-        let randomTarget = [...values, null];
-        // Fisher-Yates shuffle for the target blueprint
-        for (let i = randomTarget.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [randomTarget[i], randomTarget[j]] = [randomTarget[j], randomTarget[i]];
+    // Synthesis Audio
+    function playTick() {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.1);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.1);
+    }
+
+    // Pattern Definitions (Index Mapping)
+    const snakeMap = [0,1,2,3, 7,6,5,4, 8,9,10,11, 15,14,13,12];
+    const spiralMap = [0,1,2,3, 7,11,15,14, 13,12,8,4, 5,6,10,9];
+
+    function initGame() {
+        message.textContent = '';
+        const mode = document.getElementById('gameMode').value;
+        let baseValues = [...Array(15).keys()].map(i => i + 1);
+        let tempTarget = Array(16).fill(null);
+
+        if (mode === "linear_asc") {
+            targetState = [...baseValues, null];
+        } else if (mode === "linear_desc") {
+            targetState = [...baseValues.reverse(), null];
+        } else if (mode === "snake_asc") {
+            baseValues.forEach((v, i) => tempTarget[snakeMap[i]] = v);
+            targetState = tempTarget;
+        } else if (mode === "snake_desc") {
+            baseValues.reverse().forEach((v, i) => tempTarget[snakeMap[i]] = v);
+            targetState = tempTarget;
+        } else if (mode === "spiral_asc") {
+            baseValues.forEach((v, i) => tempTarget[spiralMap[i]] = v);
+            targetState = tempTarget;
+        } else if (mode === "spiral_desc") {
+            baseValues.reverse().forEach((v, i) => tempTarget[spiralMap[i]] = v);
+            targetState = tempTarget;
+        } else if (mode === "random_custom") {
+            // Generate a solvable random target
+            let safeTarget = [...Array(15).keys()].map(i => i + 1).concat(null);
+            for(let i=0; i<100; i++) {
+                const emptyIdx = safeTarget.indexOf(null);
+                const moves = getValidMoves(emptyIdx);
+                const moveIdx = safeTarget.indexOf(moves[Math.floor(Math.random() * moves.length)]);
+                [safeTarget[emptyIdx], safeTarget[moveIdx]] = [safeTarget[moveIdx], safeTarget[emptyIdx]];
+            }
+            targetState = safeTarget;
         }
-        targetState = randomTarget;
-        
-        // 2. Set the player's board to a different state (or solved state) 
-        // and then shuffleGame() will be called to scramble it.
-        tiles = [...values, null]; 
-    } 
-    else {
-        // ... Keep your existing snake/spiral/linear logic here ...
-        // (As defined in previous steps)
-    }
 
-    render();
-    renderPreview(); // Update the small blueprint window
-}
-
-function checkWin() {
-    // Compare current tiles array to the pre-calculated targetState
-    const isWin = tiles.every((val, index) => val === targetState[index]);
-    
-    if (isWin) {
-        setTimeout(() => {
-            message.textContent = "🎯 CHALLENGE COMPLETE!";
-            playVictorySound(); // Optional: A different sound for winning
-            
-            // Visual feedback: Make the preview glow green
-            previewGrid.style.boxShadow = "0 0 20px #38a169";
-            previewGrid.style.borderColor = "#38a169";
-        }, 150);
+        tiles = [...Array(15).keys()].map(i => i + 1).concat(null);
+        render();
+        renderPreview();
     }
-}
 
     function render() {
         grid.innerHTML = '';
-        tiles.forEach((tile, index) => {
-            const tileDiv = document.createElement('div');
-            tileDiv.classList.add('tile');
-            if (tile === null) {
-                tileDiv.classList.add('empty');
-                tileDiv.textContent = '';
-            } else {
-                tileDiv.textContent = tile;
-                tileDiv.addEventListener('click', () => moveTile(index));
-            }
-            grid.appendChild(tileDiv);
+        tiles.forEach((tile, idx) => {
+            const div = document.createElement('div');
+            div.className = 'tile' + (tile === null ? ' empty' : '');
+            div.textContent = tile || '';
+            if (tile !== null) div.onclick = () => moveTile(idx);
+            grid.appendChild(div);
         });
     }
 
-    function playTickSound() {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-
-    oscillator.type = 'sine'; // Clean, soft sound
-    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime); // Frequency in Hz
-    oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
-
-    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-
-    oscillator.start();
-    oscillator.stop(audioCtx.currentTime + 0.1);
-}
-
-    function moveTile(index) {
-        const emptyIndex = tiles.indexOf(null);
-    const validMoves = getValidMoves(emptyIndex);
-
-    if (validMoves.includes(index)) {
-        // Play the tick sound
-        playTickSound();
-
-        // Swap logic
-        [tiles[index], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[index]];
-        render();
-        checkWin();
-        }    
+    function renderPreview() {
+        preview.innerHTML = '';
+        targetState.forEach(tile => {
+            const div = document.createElement('div');
+            div.className = 'preview-tile' + (tile === null ? ' empty' : '');
+            div.textContent = tile || '';
+            preview.appendChild(div);
+        });
     }
 
-    function getValidMoves(emptyIndex) {
-        const row = Math.floor(emptyIndex / 4);
-        const col = emptyIndex % 4;
-        const moves = [];
+    function getValidMoves(idx) {
+        const row = Math.floor(idx / 4), col = idx % 4, moves = [];
+        if (row > 0) moves.push(tiles[idx - 4]);
+        if (row < 3) moves.push(tiles[idx + 4]);
+        if (col > 0) moves.push(tiles[idx - 1]);
+        if (col < 3) moves.push(tiles[idx + 1]);
+        return moves.filter(m => m !== undefined);
+    }
 
-        if (row > 0) moves.push(emptyIndex - 4); // Up
-        if (row < 3) moves.push(emptyIndex + 4); // Down
-        if (col > 0) moves.push(emptyIndex - 1); // Left
-        if (col < 3) moves.push(emptyIndex + 1); // Right
-
-        return moves;
+    function moveTile(idx) {
+        const emptyIdx = tiles.indexOf(null);
+        const validValues = getValidMoves(emptyIdx);
+        if (validValues.includes(tiles[idx])) {
+            playTick();
+            [tiles[idx], tiles[emptyIdx]] = [tiles[emptyIdx], tiles[idx]];
+            render();
+            checkWin();
+        }
     }
 
     function shuffleGame() {
-        message.textContent = '';
-        // Perform 200 random valid moves to ensure solvability
-        for (let i = 0; i < 200; i++) {
-            const emptyIndex = tiles.indexOf(null);
-            const moves = getValidMoves(emptyIndex);
-            const randomMove = moves[Math.floor(Math.random() * moves.length)];
-            [tiles[randomMove], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[randomMove]];
+        for (let i = 0; i < 300; i++) {
+            const emptyIdx = tiles.indexOf(null);
+            const moves = getValidMoves(emptyIdx);
+            const moveVal = moves[Math.floor(Math.random() * moves.length)];
+            const moveIdx = tiles.indexOf(moveVal);
+            [tiles[emptyIdx], tiles[moveIdx]] = [tiles[moveIdx], tiles[emptyIdx]];
         }
         render();
     }
 
-    
+    function checkWin() {
+        if (tiles.every((v, i) => v === targetState[i])) {
+            message.textContent = "🏆 PATTERN MATCHED!";
+        }
+    }
 
     initGame();
-    shuffleGame();
 </script>
-
 </body>
 </html>
