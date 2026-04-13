@@ -183,10 +183,95 @@ select:focus {
     border-color: var(--accent-shine);
     box-shadow: 0 0 15px rgba(74, 144, 226, 0.3);
 }
+        /* Layout Container */
+.app-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 50px;
+    background: #1a1a1a;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    border: 1px solid #333;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 200px;
+    border-right: 1px solid #333;
+    padding-right: 40px;
+}
+
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Ensure the game looks good in the new layout */
+#puzzle-grid {
+    /* Existing metallic styles from previous step */
+}
+
+/* Mobile Responsiveness: Stack them on small screens */
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        padding: 20px;
+    }
+    .sidebar {
+        border-right: none;
+        border-bottom: 1px solid #333;
+        padding-right: 0;
+        padding-bottom: 20px;
+        width: 100%;
+    }
+}
     </style>
 </head>
 <body>
+<div class="app-container">
+    <div class="sidebar">
+        <div class="header">
+            <h1>15 Puzzle Pro</h1>
+        </div>
 
+        <div class="mode-selector">
+            <label>Pattern:</label>
+            <select id="gameMode" onchange="initGame(); shuffleGame();">
+                <option value="linear_asc">Linear (1-15)</option>
+                <option value="linear_desc">Linear (15-1)</option>
+                <option value="snake_asc">Snake Ascending</option>
+                <option value="snake_desc">Snake Descending</option>
+                <option value="spiral_asc">Spiral Ascending</option>
+                <option value="spiral_desc">Spiral Descending</option>
+                <option value="random_custom">Chaos Mode (Random)</option>
+            </select>
+        </div>
+
+        <div class="challenge-container">
+            <p>Target Blueprint</p>
+            <div id="challenge-preview" class="preview-grid"></div>
+        </div>
+
+        <div class="controls">
+            <button onclick="shuffleGame()">New Game / Shuffle</button>
+        </div>
+
+        <div id="message"></div>
+    </div>
+
+    <div class="main-content">
+        <div id="puzzle-grid"></div>
+    </div>
+</div>
 <div class="header">
     <h1>15 Puzzle</h1>
     <p>Click adjacent tiles to move them.</p>
