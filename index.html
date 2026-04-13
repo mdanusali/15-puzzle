@@ -184,6 +184,46 @@
             #puzzle-grid { grid-template-columns: repeat(4, 70px); grid-template-rows: repeat(4, 70px); }
             .tile { width: 70px; height: 70px; font-size: 24px; }
         }
+        .footer {
+            margin-top: auto; /* Pushes the footer to the bottom of the sidebar */
+            padding-top: 20px;
+            border-top: 1px solid var(--sidebar-border);
+            width: 100%;
+        }
+
+        .dev-card {
+            background: #252525;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .dev-name {
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin: 0 0 4px 0;
+            color: #fff;
+        }
+
+        .dev-role {
+            font-size: 0.7rem;
+            color: #aaa;
+            margin: 0 0 8px 0;
+            line-height: 1.2;
+        }
+
+        .dev-link {
+            font-size: 0.75rem;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .dev-link:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -211,7 +251,15 @@
 
         <button onclick="shuffleGame()">Shuffle & Play</button>
         <div id="message"></div>
-    </div>
+        <div class="footer">
+            <div class="section-label">Developer</div>
+                <div class="dev-card">
+                    <p class="dev-name">Mohammad Anus Ali</p>
+                    <p class="dev-role">Programming enthusiast</p>
+                    <a href="https://linkedin.com/in/mdanusali" target="_blank" class="dev-link">Linkedin</a>
+                </div>
+            </div>
+        </div>
 
     <div class="main-content">
         <div id="puzzle-grid"></div>
