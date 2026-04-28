@@ -2,21 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>15 Puzzle Pro | Edition 2026</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>15 Puzzle | Premium</title>
     <style>
         :root {
-            --bg-deep: #0f0f0f;
-            --panel-bg: #181818;
-            --accent: #3b82f6;
-            --metal-shine: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 100%);
-            --text-main: #e2e8f0;
+            --bg-color: #0d0d0d;
+            --panel-bg: #1a1a1a;
+            --accent-blue: #4a90e2;
+            --tile-blue: #4a90e2;
+            --text-main: #ffffff;
+            --text-dim: #888888;
         }
 
         body {
-            background-color: var(--bg-deep);
+            background-color: var(--bg-color);
             color: var(--text-main);
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
@@ -24,214 +25,251 @@
             overflow: hidden;
         }
 
-        /* Dashboard Layout for Laptop */
-        .app-container {
+        /* Top Header */
+        header {
+            padding: 15px 20px;
             display: flex;
-            flex: 1;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #222;
+        }
+
+        .header-title { font-weight: bold; letter-spacing: 1px; font-size: 1.1rem; }
+
+        /* Stats Row (Moves & Time) */
+        .stats-container {
+            display: flex;
+            justify-content: space-between;
             padding: 20px;
-            gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
-            align-items: center;
-        }
-
-        .sidebar {
-            width: 280px;
-            background: var(--panel-bg);
-            padding: 25px;
-            border-radius: 16px;
-            border: 1px solid #333;
-            display: flex;
-            flex-direction: column;
             gap: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .main-game {
+        .stat-box {
+            flex: 1;
+            background: var(--panel-bg);
+            padding: 10px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #222;
+        }
+
+        .stat-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 5px; display: block; }
+        .stat-value { font-size: 1.4rem; font-weight: bold; }
+
+        /* Target Info Card */
+        .target-card {
+            background: var(--panel-bg);
+            margin: 0 20px 20px 20px;
+            padding: 15px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid #222;
+        }
+
+        .blueprint-icon { background: #000; padding: 10px; border-radius: 8px; }
+        .target-details { flex: 1; }
+        .target-details span { display: block; font-size: 0.8rem; font-weight: bold; }
+        .target-sub { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; }
+
+        /* Game Board Area */
+        main {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-        }
-
-        h1 { font-size: 1.2rem; margin: 0; letter-spacing: 1px; color: #aaa; text-transform: uppercase; }
-
-        select {
-            width: 100%;
-            background: #252525;
-            color: white;
-            border: 1px solid #444;
+            justify-content: flex-start;
             padding: 10px;
-            border-radius: 8px;
-            outline: none;
-            cursor: pointer;
         }
 
-        /* Blueprint Preview */
-        .preview-box { text-align: center; }
-        .preview-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 25px);
-            gap: 4px;
-            background: #000;
-            padding: 8px;
-            border-radius: 8px;
-            margin: 10px auto;
-            width: fit-content;
-        }
-        .p-tile { width: 25px; height: 25px; background: #333; font-size: 9px; display: flex; align-items: center; justify-content: center; border-radius: 2px; }
-        .p-tile.empty { background: #111; }
-
-        /* Game Board */
         #puzzle-grid {
             display: grid;
-            grid-template-columns: repeat(4, 90px);
-            grid-template-rows: repeat(4, 90px);
-            gap: 12px;
-            background: #111;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            background: #121212;
             padding: 15px;
             border-radius: 12px;
-            border: 4px solid #222;
-            box-shadow: inset 0 0 40px #000;
+            width: 90vw;
+            max-width: 380px;
+            aspect-ratio: 1/1;
         }
 
         .tile {
-            background: linear-gradient(145deg, #ffffff, #d1d1d1);
-            color: #1a1a1a;
+            background-color: var(--tile-blue);
+            color: #002b5c;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            font-weight: 800;
-            border-radius: 8px;
-            cursor: pointer;
-            position: relative;
-            box-shadow: 0 6px 0 #999, 0 12px 20px rgba(0,0,0,0.4);
-            transition: transform 0.05s;
-        }
-        .tile::after { content: ''; position: absolute; inset: 0; background: var(--metal-shine); border-radius: 8px; }
-        .tile:active { transform: translateY(4px); box-shadow: 0 2px 0 #999; }
-        .tile.empty { background: #0a0a0a !important; box-shadow: inset 0 6px 12px rgba(0,0,0,0.8); cursor: default; }
-        .tile.empty::after { display: none; }
-
-        button {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 8px;
+            font-size: 1.8rem;
             font-weight: bold;
+            border-radius: 8px;
             cursor: pointer;
-            width: 100%;
-            transition: filter 0.2s;
+            transition: transform 0.05s;
+            -webkit-tap-highlight-color: transparent;
         }
-        button:hover { filter: brightness(1.2); }
 
-        #message { height: 24px; color: #fbbf24; font-weight: bold; margin-bottom: 10px; }
+        .tile.empty { background-color: #000 !important; cursor: default; }
 
-        /* Fixed Single Line Footer */
-        footer {
+        /* Action Buttons */
+        .actions { width: 100%; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px; }
+        
+        .btn-main {
+            background: var(--accent-blue);
+            color: white;
+            padding: 15px;
+            border-radius: 30px;
+            border: none;
+            font-weight: bold;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .secondary-actions { display: flex; gap: 10px; }
+        .btn-sec { flex: 1; background: #222; color: #fff; padding: 12px; border-radius: 12px; border: none; font-size: 0.8rem; font-weight: bold; }
+
+        /* Bottom Nav */
+        nav {
             background: #0a0a0a;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0 25px 0;
             border-top: 1px solid #222;
-            padding: 12px;
-            text-align: center;
-            font-size: 0.85rem;
-            color: #666;
         }
-        footer b { color: var(--accent); }
-        footer a { color: #888; text-decoration: none; margin-left: 15px; border-left: 1px solid #333; padding-left: 15px; }
 
-        /* Responsive Fix for Mobile */
-        @media (max-width: 800px) {
-            .app-container { flex-direction: column; overflow-y: auto; height: auto; padding: 10px; }
-            .sidebar { width: 100%; box-sizing: border-box; }
-            #puzzle-grid { grid-template-columns: repeat(4, 75px); grid-template-rows: repeat(4, 75px); }
-            .tile { font-size: 1.5rem; }
-        }
+        .nav-item { text-align: center; color: var(--text-dim); flex: 1; }
+        .nav-item.active { color: var(--accent-blue); }
+        .nav-icon { font-size: 1.2rem; display: block; margin-bottom: 4px; }
+        .nav-label { font-size: 0.6rem; text-transform: uppercase; font-weight: bold; }
+
+        footer { font-size: 0.7rem; color: #333; text-align: center; padding-bottom: 5px; }
+
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="sidebar">
-        <h1>15 Puzzle</h1>
-        
-        <div>
-            <label style="font-size: 0.7rem; color: #666; text-transform: uppercase;">Game Mode</label>
-            <select id="gameMode" onchange="initGame();">
-                <option value="linear_asc">Linear (1-15)</option>
-                <option value="linear_desc">Linear (15-1)</option>
-                <option value="snake_asc">Snake Asc</option>
-                <option value="snake_desc">Snake Desc</option>
-                <option value="spiral_asc">Spiral Asc</option>
-                <option value="spiral_desc">Spiral Desc</option>
-                <option value="chaos">Chaos Mode</option>
-            </select>
-        </div>
+<header>
+    <div class="header-icon">☰</div>
+    <div class="header-title">15 PUZZLE</div>
+    <div class="header-settings">⚙</div>
+</header>
 
-        <div class="preview-box">
-            <div class="preview-grid" id="challenge-preview"></div>
-            <span style="font-size: 0.7rem; color: #555;">TARGET PATTERN</span>
-        </div>
-
-        <button onclick="shuffleGame()">SHUFFLE & PLAY</button>
+<div class="stats-container">
+    <div class="stat-box">
+        <span class="stat-label">Moves</span>
+        <div class="stat-value" id="move-count">0</div>
     </div>
-
-    <div class="main-game">
-        <div id="message"></div>
-        <div id="puzzle-grid"></div>
+    <div class="stat-box">
+        <span class="stat-label">Time</span>
+        <div class="stat-value" id="timer">00:00</div>
     </div>
 </div>
 
-<footer>
-    Developed by <b>Mohammad Anus Ali</b> | Programming Enthusiast <a href="https://linkedin.com/in/mdanusali" target="_blank">LinkedIn</a>
-</footer>
+<div class="target-card">
+    <div class="blueprint-icon">
+        <div id="challenge-preview" style="display:grid; grid-template-columns: repeat(4, 5px); gap:2px;"></div>
+    </div>
+    <div class="target-details">
+        <span>TARGET</span>
+        <div class="target-sub" id="mode-name">CLASSIC ASC</div>
+    </div>
+    <select id="gameMode" onchange="initGame();" style="background:#000; color:#fff; border:none; border-radius:8px; padding:5px; font-size:0.7rem;">
+        <option value="linear_asc">4X4 ASC</option>
+        <option value="linear_desc">4X4 DESC</option>
+        <option value="snake_asc">SNAKE</option>
+        <option value="spiral_asc">SPIRAL</option>
+    </select>
+</div>
+
+<main>
+    <div id="puzzle-grid"></div>
+</main>
+
+<div class="actions">
+    <button class="btn-main" onclick="shuffleGame()">
+        <span>⤧</span> SHUFFLE & PLAY
+    </button>
+    <div class="secondary-actions">
+        <button class="btn-sec">UNDO</button>
+        <button class="btn-sec">HINT</button>
+    </div>
+</div>
+
+<nav>
+    <div class="nav-item active">
+        <span class="nav-icon">▤</span>
+        <span class="nav-label">Play</span>
+    </div>
+    <div class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Stats</span>
+    </div>
+    <div class="nav-item">
+        <span class="nav-icon">👥</span>
+        <span class="nav-label">Social</span>
+    </div>
+</nav>
+
+<footer>Developed by Your Name</footer>
 
 <script>
     let tiles = [];
     let targetState = [];
+    let moves = 0;
+    let timerInterval;
+    let seconds = 0;
+    
     const grid = document.getElementById('puzzle-grid');
     const preview = document.getElementById('challenge-preview');
-    const message = document.getElementById('message');
+    const moveDisplay = document.getElementById('move-count');
+    const timeDisplay = document.getElementById('timer');
 
     function playTick() {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-        osc.frequency.setValueAtTime(500, ctx.currentTime);
+        osc.frequency.setValueAtTime(400, ctx.currentTime);
         osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.1);
-        gain.gain.setValueAtTime(0.1, ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.05, ctx.currentTime);
         osc.connect(gain); gain.connect(ctx.destination);
         osc.start(); osc.stop(ctx.currentTime + 0.1);
     }
 
-    const snakeMap = [0,1,2,3, 7,6,5,4, 8,9,10,11, 15,14,13,12];
-    const spiralMap = [0,1,2,3, 7,11,15,14, 13,12,8,4, 5,6,10,9];
+    function startTimer() {
+        clearInterval(timerInterval);
+        seconds = 0;
+        timerInterval = setInterval(() => {
+            seconds++;
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            timeDisplay.textContent = `${m}:${s}`;
+        }, 1000);
+    }
 
     function initGame() {
-        message.textContent = '';
         const mode = document.getElementById('gameMode').value;
-        let base = [...Array(15).keys()].map(i => i + 1);
-        let temp = Array(16).fill(null);
-
-        if (mode === "linear_asc") targetState = [...base, null];
-        else if (mode === "linear_desc") targetState = [...base.reverse(), null];
-        else if (mode === "snake_asc") { base.forEach((v, i) => temp[snakeMap[i]] = v); targetState = temp; }
-        else if (mode === "snake_desc") { base.reverse().forEach((v, i) => temp[snakeMap[i]] = v); targetState = temp; }
-        else if (mode === "spiral_asc") { base.forEach((v, i) => temp[spiralMap[i]] = v); targetState = temp; }
-        else if (mode === "spiral_desc") { base.reverse().forEach((v, i) => temp[spiralMap[i]] = v); targetState = temp; }
-        else if (mode === "chaos") {
-            let safe = [...base, null];
-            for(let i=0; i<150; i++) {
-                const empty = safe.indexOf(null);
-                const moves = getNeighbors(empty, safe);
-                const moveVal = moves[Math.floor(Math.random() * moves.length)];
-                const moveIdx = safe.indexOf(moveVal);
-                [safe[empty], safe[moveIdx]] = [safe[moveIdx], safe[empty]];
-            }
-            targetState = safe;
+        document.getElementById('mode-name').textContent = mode.replace('_', ' ').toUpperCase();
+        moves = 0;
+        moveDisplay.textContent = moves;
+        clearInterval(timerInterval);
+        timeDisplay.textContent = "00:00";
+        
+        let baseValues = [...Array(15).keys()].map(i => i + 1);
+        if (mode === "linear_asc") targetState = [...baseValues, null];
+        else if (mode === "linear_desc") targetState = [...baseValues.reverse(), null];
+        else if (mode === "snake_asc") {
+            let temp = Array(16).fill(null);
+            const snakeMap = [0,1,2,3, 7,6,5,4, 8,9,10,11, 15,14,13,12];
+            baseValues.forEach((v, i) => temp[snakeMap[i]] = v);
+            targetState = temp;
+        } else if (mode === "spiral_asc") {
+            let temp = Array(16).fill(null);
+            const spiralMap = [0,1,2,3, 7,11,15,14, 13,12,8,4, 5,6,10,9];
+            baseValues.forEach((v, i) => temp[spiralMap[i]] = v);
+            targetState = temp;
         }
 
         tiles = [...Array(15).keys()].map(i => i + 1).concat(null);
@@ -254,37 +292,43 @@
         preview.innerHTML = '';
         targetState.forEach(tile => {
             const div = document.createElement('div');
-            div.className = 'p-tile' + (tile === null ? ' empty' : '');
-            div.textContent = tile || '';
+            div.style.width = '5px';
+            div.style.height = '5px';
+            div.style.backgroundColor = tile ? '#4a90e2' : '#222';
             preview.appendChild(div);
         });
     }
 
-    function getNeighbors(idx, boardArray) {
-        const row = Math.floor(idx / 4), col = idx % 4, neighbors = [];
-        if (row > 0) neighbors.push(boardArray[idx - 4]);
-        if (row < 3) neighbors.push(boardArray[idx + 4]);
-        if (col > 0) neighbors.push(boardArray[idx - 1]);
-        if (col < 3) neighbors.push(boardArray[idx + 1]);
-        return neighbors.filter(n => n !== undefined && n !== null);
-    }
-
     function moveTile(idx) {
         const emptyIdx = tiles.indexOf(null);
-        if (getNeighbors(emptyIdx, tiles).includes(tiles[idx])) {
+        const row = Math.floor(idx / 4), col = idx % 4;
+        const eRow = Math.floor(emptyIdx / 4), eCol = emptyIdx % 4;
+        
+        if (Math.abs(row - eRow) + Math.abs(col - eCol) === 1) {
             playTick();
             [tiles[idx], tiles[emptyIdx]] = [tiles[emptyIdx], tiles[idx]];
+            moves++;
+            moveDisplay.textContent = moves;
+            if (moves === 1) startTimer();
             render();
-            if (tiles.every((v, i) => v === targetState[i])) message.textContent = "🎯 CHALLENGE COMPLETE!";
+            if (tiles.every((v, i) => v === targetState[i])) {
+                clearInterval(timerInterval);
+                alert(`Solved in ${moves} moves!`);
+            }
         }
     }
 
     function shuffleGame() {
-        for (let i = 0; i < 300; i++) {
+        initGame();
+        for (let i = 0; i < 200; i++) {
             const emptyIdx = tiles.indexOf(null);
-            const moves = getNeighbors(emptyIdx, tiles);
-            const moveVal = moves[Math.floor(Math.random() * moves.length)];
-            const moveIdx = tiles.indexOf(moveVal);
+            const row = Math.floor(emptyIdx / 4), col = emptyIdx % 4;
+            let moves = [];
+            if (row > 0) moves.push(emptyIdx - 4);
+            if (row < 3) moves.push(emptyIdx + 4);
+            if (col > 0) moves.push(emptyIdx - 1);
+            if (col < 3) moves.push(emptyIdx + 1);
+            const moveIdx = moves[Math.floor(Math.random() * moves.length)];
             [tiles[emptyIdx], tiles[moveIdx]] = [tiles[moveIdx], tiles[emptyIdx]];
         }
         render();
