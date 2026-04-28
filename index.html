@@ -1,340 +1,287 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="dark" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>15 Puzzle | Premium</title>
-    <style>
-        :root {
-            --bg-color: #0d0d0d;
-            --panel-bg: #1a1a1a;
-            --accent-blue: #4a90e2;
-            --tile-blue: #4a90e2;
-            --text-main: #ffffff;
-            --text-dim: #888888;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Top Header */
-        header {
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #222;
-        }
-
-        .header-title { font-weight: bold; letter-spacing: 1px; font-size: 1.1rem; }
-
-        /* Stats Row (Moves & Time) */
-        .stats-container {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-            gap: 20px;
-        }
-
-        .stat-box {
-            flex: 1;
-            background: var(--panel-bg);
-            padding: 10px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid #222;
-        }
-
-        .stat-label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 5px; display: block; }
-        .stat-value { font-size: 1.4rem; font-weight: bold; }
-
-        /* Target Info Card */
-        .target-card {
-            background: var(--panel-bg);
-            margin: 0 20px 20px 20px;
-            padding: 15px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            border: 1px solid #222;
-        }
-
-        .blueprint-icon { background: #000; padding: 10px; border-radius: 8px; }
-        .target-details { flex: 1; }
-        .target-details span { display: block; font-size: 0.8rem; font-weight: bold; }
-        .target-sub { font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; }
-
-        /* Game Board Area */
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 10px;
-        }
-
-        #puzzle-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            background: #121212;
-            padding: 15px;
-            border-radius: 12px;
-            width: 90vw;
-            max-width: 380px;
-            aspect-ratio: 1/1;
-        }
-
-        .tile {
-            background-color: var(--tile-blue);
-            color: #002b5c;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.05s;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .tile.empty { background-color: #000 !important; cursor: default; }
-
-        /* Action Buttons */
-        .actions { width: 100%; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px; }
-        
-        .btn-main {
-            background: var(--accent-blue);
-            color: white;
-            padding: 15px;
-            border-radius: 30px;
-            border: none;
-            font-weight: bold;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .secondary-actions { display: flex; gap: 10px; }
-        .btn-sec { flex: 1; background: #222; color: #fff; padding: 12px; border-radius: 12px; border: none; font-size: 0.8rem; font-weight: bold; }
-
-        /* Bottom Nav */
-        nav {
-            background: #0a0a0a;
-            display: flex;
-            justify-content: space-around;
-            padding: 15px 0 25px 0;
-            border-top: 1px solid #222;
-        }
-
-        .nav-item { text-align: center; color: var(--text-dim); flex: 1; }
-        .nav-item.active { color: var(--accent-blue); }
-        .nav-icon { font-size: 1.2rem; display: block; margin-bottom: 4px; }
-        .nav-label { font-size: 0.6rem; text-transform: uppercase; font-weight: bold; }
-
-        footer { font-size: 0.7rem; color: #333; text-align: center; padding-bottom: 5px; }
-
-    </style>
-</head>
-<body>
-
-<header>
-    <div class="header-icon">☰</div>
-    <div class="header-title">15 PUZZLE</div>
-    <div class="header-settings">⚙</div>
-</header>
-
-<div class="stats-container">
-    <div class="stat-box">
-        <span class="stat-label">Moves</span>
-        <div class="stat-value" id="move-count">0</div>
-    </div>
-    <div class="stat-box">
-        <span class="stat-label">Time</span>
-        <div class="stat-value" id="timer">00:00</div>
-    </div>
-</div>
-
-<div class="target-card">
-    <div class="blueprint-icon">
-        <div id="challenge-preview" style="display:grid; grid-template-columns: repeat(4, 5px); gap:2px;"></div>
-    </div>
-    <div class="target-details">
-        <span>TARGET</span>
-        <div class="target-sub" id="mode-name">CLASSIC ASC</div>
-    </div>
-    <select id="gameMode" onchange="initGame();" style="background:#000; color:#fff; border:none; border-radius:8px; padding:5px; font-size:0.7rem;">
-        <option value="linear_asc">4X4 ASC</option>
-        <option value="linear_desc">4X4 DESC</option>
-        <option value="snake_asc">SNAKE</option>
-        <option value="spiral_asc">SPIRAL</option>
-    </select>
-</div>
-
-<main>
-    <div id="puzzle-grid"></div>
-</main>
-
-<div class="actions">
-    <button class="btn-main" onclick="shuffleGame()">
-        <span>⤧</span> SHUFFLE & PLAY
-    </button>
-    <div class="secondary-actions">
-        <button class="btn-sec">UNDO</button>
-        <button class="btn-sec">HINT</button>
-    </div>
-</div>
-
-<nav>
-    <div class="nav-item active">
-        <span class="nav-icon">▤</span>
-        <span class="nav-label">Play</span>
-    </div>
-    <div class="nav-item">
-        <span class="nav-icon">📊</span>
-        <span class="nav-label">Stats</span>
-    </div>
-    <div class="nav-item">
-        <span class="nav-icon">👥</span>
-        <span class="nav-label">Social</span>
-    </div>
-</nav>
-
-<footer>Developed by Your Name</footer>
-
-<script>
-    let tiles = [];
-    let targetState = [];
-    let moves = 0;
-    let timerInterval;
-    let seconds = 0;
-    
-    const grid = document.getElementById('puzzle-grid');
-    const preview = document.getElementById('challenge-preview');
-    const moveDisplay = document.getElementById('move-count');
-    const timeDisplay = document.getElementById('timer');
-
-    function playTick() {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.frequency.setValueAtTime(400, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(100, ctx.currentTime + 0.1);
-        gain.gain.setValueAtTime(0.05, ctx.currentTime);
-        osc.connect(gain); gain.connect(ctx.destination);
-        osc.start(); osc.stop(ctx.currentTime + 0.1);
-    }
-
-    function startTimer() {
-        clearInterval(timerInterval);
-        seconds = 0;
-        timerInterval = setInterval(() => {
-            seconds++;
-            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-            const s = (seconds % 60).toString().padStart(2, '0');
-            timeDisplay.textContent = `${m}:${s}`;
-        }, 1000);
-    }
-
-    function initGame() {
-        const mode = document.getElementById('gameMode').value;
-        document.getElementById('mode-name').textContent = mode.replace('_', ' ').toUpperCase();
-        moves = 0;
-        moveDisplay.textContent = moves;
-        clearInterval(timerInterval);
-        timeDisplay.textContent = "00:00";
-        
-        let baseValues = [...Array(15).keys()].map(i => i + 1);
-        if (mode === "linear_asc") targetState = [...baseValues, null];
-        else if (mode === "linear_desc") targetState = [...baseValues.reverse(), null];
-        else if (mode === "snake_asc") {
-            let temp = Array(16).fill(null);
-            const snakeMap = [0,1,2,3, 7,6,5,4, 8,9,10,11, 15,14,13,12];
-            baseValues.forEach((v, i) => temp[snakeMap[i]] = v);
-            targetState = temp;
-        } else if (mode === "spiral_asc") {
-            let temp = Array(16).fill(null);
-            const spiralMap = [0,1,2,3, 7,11,15,14, 13,12,8,4, 5,6,10,9];
-            baseValues.forEach((v, i) => temp[spiralMap[i]] = v);
-            targetState = temp;
-        }
-
-        tiles = [...Array(15).keys()].map(i => i + 1).concat(null);
-        render();
-        renderPreview();
-    }
-
-    function render() {
-        grid.innerHTML = '';
-        tiles.forEach((tile, idx) => {
-            const div = document.createElement('div');
-            div.className = 'tile' + (tile === null ? ' empty' : '');
-            div.textContent = tile || '';
-            if (tile !== null) div.onclick = () => moveTile(idx);
-            grid.appendChild(div);
-        });
-    }
-
-    function renderPreview() {
-        preview.innerHTML = '';
-        targetState.forEach(tile => {
-            const div = document.createElement('div');
-            div.style.width = '5px';
-            div.style.height = '5px';
-            div.style.backgroundColor = tile ? '#4a90e2' : '#222';
-            preview.appendChild(div);
-        });
-    }
-
-    function moveTile(idx) {
-        const emptyIdx = tiles.indexOf(null);
-        const row = Math.floor(idx / 4), col = idx % 4;
-        const eRow = Math.floor(emptyIdx / 4), eCol = emptyIdx % 4;
-        
-        if (Math.abs(row - eRow) + Math.abs(col - eCol) === 1) {
-            playTick();
-            [tiles[idx], tiles[emptyIdx]] = [tiles[emptyIdx], tiles[idx]];
-            moves++;
-            moveDisplay.textContent = moves;
-            if (moves === 1) startTimer();
-            render();
-            if (tiles.every((v, i) => v === targetState[i])) {
-                clearInterval(timerInterval);
-                alert(`Solved in ${moves} moves!`);
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+    <title>15-Puzzle Pro | Tactile Modernism</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-dim": "#131313",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-container-highest": "#353534",
+                        "primary-container": "#4d8eff",
+                        "on-primary-container": "#00285d",
+                        "secondary": "#4edea3"
+                    }
+                }
             }
         }
-    }
+    </script>
+    <style>
+        .tile-shadow { box-shadow: 0 6px 0 0 #002e6a, inset 0 1px 0 0 rgba(255, 255, 255, 0.2); }
+        .tile-pressed { transform: translateY(4px); box-shadow: 0 2px 0 0 #002e6a; }
+        .board-inset { box-shadow: inset 0 4px 12px 0 rgba(0, 0, 0, 0.5); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-surface-dim text-slate-200 font-['Inter'] overflow-hidden h-screen flex flex-col">
 
-    function shuffleGame() {
-        initGame();
-        for (let i = 0; i < 200; i++) {
-            const emptyIdx = tiles.indexOf(null);
-            const row = Math.floor(emptyIdx / 4), col = emptyIdx % 4;
-            let moves = [];
-            if (row > 0) moves.push(emptyIdx - 4);
-            if (row < 3) moves.push(emptyIdx + 4);
-            if (col > 0) moves.push(emptyIdx - 1);
-            if (col < 3) moves.push(emptyIdx + 1);
-            const moveIdx = moves[Math.floor(Math.random() * moves.length)];
-            [tiles[emptyIdx], tiles[moveIdx]] = [tiles[moveIdx], tiles[emptyIdx]];
+    <!-- Header -->
+    <header class="h-16 border-b border-neutral-800 bg-black flex items-center justify-between px-6 shrink-0 z-50">
+        <div class="text-blue-500 font-black tracking-tighter text-lg lg:text-xl">15-PUZZLE PRO</div>
+        <div class="flex gap-4">
+            <button onclick="initGame()" class="p-2 hover:bg-neutral-800 rounded-lg transition-colors">
+                <span class="material-symbols-outlined align-middle">refresh</span>
+            </button>
+            <button class="p-2 hover:bg-neutral-800 rounded-lg transition-colors">
+                <span class="material-symbols-outlined align-middle">settings</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden relative">
+        <!-- Sidebar (Hidden on Mobile) -->
+        <aside class="hidden lg:flex w-64 bg-black border-r border-neutral-800 flex-col pt-8 shrink-0">
+            <div class="px-6 mb-8 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold">PM</div>
+                <div>
+                    <h3 class="text-sm font-bold uppercase tracking-tight">Puzzle Master</h3>
+                    <p class="text-[10px] text-neutral-500 uppercase font-bold tracking-widest">Rank: Grandmaster</p>
+                </div>
+            </div>
+            
+            <nav class="flex-grow space-y-1">
+                <div class="bg-blue-500/10 text-blue-400 border-r-4 border-blue-500 px-6 py-4 flex items-center gap-3 text-sm font-bold uppercase tracking-widest">
+                    <span class="material-symbols-outlined">extension</span> Play
+                </div>
+                <div class="px-6 py-4 flex items-center gap-3 text-neutral-500 text-sm font-bold uppercase tracking-widest hover:text-white cursor-pointer">
+                    <span class="material-symbols-outlined">bar_chart</span> Stats
+                </div>
+            </nav>
+
+            <div class="p-6 border-t border-neutral-900 space-y-4">
+                <div class="bg-neutral-900/50 p-4 rounded-xl border border-neutral-800 flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] text-neutral-500 font-black uppercase tracking-widest">Moves</p>
+                        <p id="move-count-side" class="text-2xl font-black text-blue-500">0</p>
+                    </div>
+                    <span class="material-symbols-outlined text-neutral-700">rebase_edit</span>
+                </div>
+                <div class="bg-neutral-900/50 p-4 rounded-xl border border-neutral-800 flex justify-between items-center">
+                    <div>
+                        <p class="text-[10px] text-neutral-500 font-black uppercase tracking-widest">Time</p>
+                        <p id="timer-side" class="text-2xl font-black text-secondary">00:00</p>
+                    </div>
+                    <span class="material-symbols-outlined text-neutral-700">timer</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto hide-scrollbar bg-surface-dim p-4 lg:p-12 flex flex-col items-center">
+            
+            <!-- Mobile Stats Bar -->
+            <div class="lg:hidden w-full max-w-[400px] flex justify-between mb-6 gap-4">
+                <div class="flex-1 bg-surface-container-low p-3 rounded-xl border border-neutral-800 flex flex-col items-center">
+                    <span class="text-[10px] text-neutral-500 uppercase font-black tracking-widest">Moves</span>
+                    <span id="move-count-mob" class="text-xl font-black text-blue-500">0</span>
+                </div>
+                <div class="flex-1 bg-surface-container-low p-3 rounded-xl border border-neutral-800 flex flex-col items-center">
+                    <span class="text-[10px] text-neutral-500 uppercase font-black tracking-widest">Time</span>
+                    <span id="timer-mob" class="text-xl font-black text-secondary">00:00</span>
+                </div>
+            </div>
+
+            <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+                
+                <!-- Left Control Panel -->
+                <div class="lg:col-span-3 order-2 lg:order-1 space-y-6">
+                    <div class="flex flex-col gap-4">
+                        <select id="gameMode" onchange="initGame()" class="w-full bg-neutral-900 text-white border-neutral-700 rounded-xl py-3 px-4 text-sm font-bold uppercase tracking-widest focus:ring-blue-500">
+                            <option value="linear_asc">Linear (1-15)</option>
+                            <option value="linear_desc">Linear (15-1)</option>
+                            <option value="snake_asc">Snake Asc</option>
+                            <option value="spiral_asc">Spiral Asc</option>
+                        </select>
+                        <button onclick="shuffleGame()" class="w-full bg-primary-container text-white py-5 rounded-2xl font-black uppercase tracking-tighter text-lg shadow-[0_6px_0_0_#004395] active:translate-y-1 active:shadow-none transition-all flex flex-col items-center gap-1">
+                            <span class="material-symbols-outlined text-3xl">shuffle</span>
+                            <span>SHUFFLE & PLAY</span>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button class="bg-neutral-800 py-4 rounded-xl font-bold uppercase text-xs tracking-widest shadow-[0_4px_0_0_#000] active:translate-y-1 active:shadow-none transition-all border border-neutral-700 flex flex-col items-center gap-2">
+                            <span class="material-symbols-outlined">undo</span> UNDO
+                        </button>
+                        <button class="bg-neutral-800 py-4 rounded-xl font-bold uppercase text-xs tracking-widest shadow-[0_4px_0_0_#000] active:translate-y-1 active:shadow-none transition-all border border-neutral-700 flex flex-col items-center gap-2">
+                            <span class="material-symbols-outlined">lightbulb</span> HINT
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Center Puzzle -->
+                <div class="lg:col-span-6 order-1 lg:order-2 flex flex-col items-center">
+                    <div id="message" class="h-8 text-secondary font-black uppercase tracking-widest text-sm mb-4"></div>
+                    <div class="bg-black p-3 lg:p-4 rounded-[2rem] border-4 border-neutral-900 board-inset">
+                        <div id="puzzle-grid" class="grid grid-cols-4 gap-2 lg:gap-3 w-[85vw] h-[85vw] max-w-[440px] max-h-[440px] lg:w-[480px] lg:h-[480px]">
+                            <!-- Tiles generated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Bento Panel -->
+                <div class="lg:col-span-3 order-3 space-y-4">
+                    <div class="bg-neutral-900/50 p-6 rounded-2xl border border-neutral-800 flex flex-col items-center">
+                        <h5 class="text-[10px] font-black uppercase tracking-widest text-neutral-500 mb-2">Target Blueprint</h5>
+                        <div id="target-preview" class="grid grid-cols-4 gap-1 bg-black p-2 rounded-lg"></div>
+                    </div>
+                    <div class="bg-blue-500/10 p-6 rounded-2xl border border-blue-500/20">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="material-symbols-outlined text-blue-400 text-sm">auto_awesome</span>
+                            <h5 class="text-[10px] font-black uppercase tracking-widest text-blue-400">Pro Tip</h5>
+                        </div>
+                        <p class="text-[11px] leading-relaxed text-neutral-400">Solve row-by-row for the most efficient path. Watch the preview!</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile Spacer for Footer -->
+            <div class="h-24 lg:hidden"></div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="h-14 bg-black border-t border-neutral-900 flex items-center justify-between px-6 lg:px-12 text-[10px] uppercase tracking-widest text-neutral-600 shrink-0 z-50">
+        <div>© 2026 TACTILE MODERNISM LABS</div>
+        <div class="flex gap-6">
+            <span class="hover:text-blue-400 cursor-pointer transition-colors">Privacy</span>
+            <span class="hover:text-blue-400 cursor-pointer transition-colors">Terms</span>
+        </div>
+    </footer>
+
+    <script>
+        let tiles = [];
+        let targetState = [];
+        let moves = 0;
+        let timerInterval;
+        let seconds = 0;
+
+        const grid = document.getElementById('puzzle-grid');
+        const preview = document.getElementById('target-preview');
+        const msg = document.getElementById('message');
+        
+        const snakeMap = [0,1,2,3, 7,6,5,4, 8,9,10,11, 15,14,13,12];
+        const spiralMap = [0,1,2,3, 7,11,15,14, 13,12,8,4, 5,6,10,9];
+
+        function initGame() {
+            const mode = document.getElementById('gameMode').value;
+            moves = 0;
+            updateStats();
+            stopTimer();
+            msg.textContent = '';
+            
+            let base = [...Array(15).keys()].map(i => i + 1);
+            let temp = Array(16).fill(null);
+
+            if (mode === "linear_asc") targetState = [...base, null];
+            else if (mode === "linear_desc") targetState = [...base.reverse(), null];
+            else if (mode === "snake_asc") { base.forEach((v, i) => temp[snakeMap[i]] = v); targetState = temp; }
+            else if (mode === "spiral_asc") { base.forEach((v, i) => temp[spiralMap[i]] = v); targetState = temp; }
+
+            tiles = [...Array(15).keys()].map(i => i + 1).concat(null);
+            render();
+            renderPreview();
         }
-        render();
-    }
 
-    initGame();
-</script>
+        function render() {
+            grid.innerHTML = '';
+            tiles.forEach((tile, idx) => {
+                const div = document.createElement('div');
+                div.className = tile === null ? 
+                    "bg-neutral-900/30 rounded-xl border-2 border-dashed border-neutral-800/50" : 
+                    "bg-primary-container text-on-primary-container font-bold text-2xl lg:text-3xl rounded-xl flex items-center justify-center cursor-pointer tile-shadow transition-all duration-75 active:tile-pressed select-none";
+                div.textContent = tile || '';
+                if (tile !== null) div.onclick = () => moveTile(idx);
+                grid.appendChild(div);
+            });
+        }
+
+        function renderPreview() {
+            preview.innerHTML = '';
+            targetState.forEach(tile => {
+                const d = document.createElement('div');
+                d.className = `w-4 h-4 rounded-sm flex items-center justify-center text-[8px] font-bold ${tile ? 'bg-blue-600' : 'bg-neutral-800'}`;
+                d.textContent = tile || '';
+                preview.appendChild(d);
+            });
+        }
+
+        function moveTile(idx) {
+            const emptyIdx = tiles.indexOf(null);
+            const row = Math.floor(idx / 4), col = idx % 4;
+            const eRow = Math.floor(emptyIdx / 4), eCol = emptyIdx % 4;
+            
+            if (Math.abs(row - eRow) + Math.abs(col - eCol) === 1) {
+                if (moves === 0) startTimer();
+                [tiles[idx], tiles[emptyIdx]] = [tiles[emptyIdx], tiles[idx]];
+                moves++;
+                updateStats();
+                render();
+                checkWin();
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('move-count-side').textContent = moves;
+            document.getElementById('move-count-mob').textContent = moves;
+        }
+
+        function startTimer() {
+            seconds = 0;
+            timerInterval = setInterval(() => {
+                seconds++;
+                const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const s = (seconds % 60).toString().padStart(2, '0');
+                const time = `${m}:${s}`;
+                document.getElementById('timer-side').textContent = time;
+                document.getElementById('timer-mob').textContent = time;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            document.getElementById('timer-side').textContent = "00:00";
+            document.getElementById('timer-mob').textContent = "00:00";
+        }
+
+        function shuffleGame() {
+            initGame();
+            for (let i = 0; i < 300; i++) {
+                const empty = tiles.indexOf(null);
+                const row = Math.floor(empty / 4), col = empty % 4;
+                let m = [];
+                if (row > 0) m.push(empty - 4); if (row < 3) m.push(empty + 4);
+                if (col > 0) m.push(empty - 1); if (col < 3) m.push(empty + 1);
+                const next = m[Math.floor(Math.random() * m.length)];
+                [tiles[empty], tiles[next]] = [tiles[next], tiles[empty]];
+            }
+            render();
+        }
+
+        function checkWin() {
+            if (tiles.every((v, i) => v === targetState[i])) {
+                clearInterval(timerInterval);
+                msg.textContent = "🏆 Victory!";
+            }
+        }
+
+        initGame();
+    </script>
 </body>
 </html>
